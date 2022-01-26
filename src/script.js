@@ -58,7 +58,7 @@ var _vue = new Vue({
         viewCode(i){
             this.isLiked = "false";
             this.page = "kod";
-            socket.emit("getCodeLikesToServer",i);
+            socket.emit("getCodeLikesToServer",this.codes[i].codeId);
             socket.on("getCodeLikesToClient",data => {
                 this.viewingCodeLikes = data;
                 this.viewingCodeId = i;
