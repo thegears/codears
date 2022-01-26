@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Codears - Admin Panel</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+		<script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    </head>
+
+    <body>
+        <div id="app">
+            <div v-if="page == 'main'">
+                <div v-for = "(c,i) in codes">
+                    <center>
+                        <div v-on:click="viewCode(i)" id="kodBakCodeDiv">
+                            <center>
+                                <p id="kodBakCodeName">{{c.name}}</p>
+                                <p id="kodBakCodeDescription">{{c.description}}</p>
+                                <p id="kodBakCodeOwner">{{c.owner}}</p>
+                            </center>
+                        </div>
+                    </center>
+                </div>
+            </div>
+
+            <div v-else>
+                <button class="backButton" style="display: inline-block;" v-on:click="page = 'main'"> < </button>
+                <center>
+                    <span id="kodCodeName">{{codes[viewingCodeId].name}}</span>
+                    <p id="kodCodeDescription">{{codes[viewingCodeId].description}}</p>
+                    <textarea id="kodCodeArea" disabled>{{codes[viewingCodeId].code}}</textarea>
+                    <div style="text-align: right;"><p><span id="kodCodeOwner">-{{codes[viewingCodeId].owner}}</span></p></div>
+                    <button class="buttonN" v-on:click="acceptCode">Onay</button> <button class="buttonN" v-on:click="declineCode">Red</button>
+                </center>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        const socket = io();
+
+        let _vue = new Vue({
+            el : "#app",
+            data : {
+                codes : [],
+                page : "main",
+                viewingCodeId : "",
+                codesLength : 0
+            },
+            methods : {
+                viewCode(i){
+                    this.viewingCodeId = i;
+                    this.page = "kod";
+                },
+                acceptCode(){
+                    socket.emit("adminPanelAcceptCodeToServer",this.codesLength - 1);
+                    this.page = "main";
+                },
+                declineCode(){
+                    socket.emit("adminPanelDeclineCodeToServer",this.codesLength - 1);
+                    this.page = "main";
+                }
+            }
+        });
+        
+        socket.emit("adminPanelGetCodesToServer","adminPanelGetCodesToServer");
+        socket.on("adminPanelGetCodesToClient",data => {
+            let gsifre = prompt("Şifre","Şifre");
+            if(gsifre != data[2]) return location.reload();
+            _vue.codesLength = data[0].length;    
+            _vue.codes = data[0].filter(a => data[1].includes(a.codeId));
+        });
+    </script>
+
+    <style>
+        body {
+            color: #ccc;
+            background: #111;
+            font-family: sans-serif;
+        }
+
+        #kodBakCodeDiv{
+            width: 94%;
+            border: 2px solid white;
+            box-shadow: 1px 1px 1px 1px white;
+            border-radius: 10px;
+            margin-bottom: 5%;
+        }
+
+        #kodBakCodeDiv:hover{
+            background-color: white;
+            color: #111;
+        }
+
+        #kodBakCodeName{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 125%;
+        }
+
+        #kodBakCodeDescription{
+
+        }
+
+        .backButton{
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+            border: 2px solid white;
+            box-shadow: 1px 1px 1px 1px white;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            background-color: #111;
+            color: white;
+            font-size: 200%
+        }
+
+        #kodCodeName{
+            font-size: 150%;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        #kodCodeDescription{
+
+        }
+
+        #kodCodeArea{
+            resize: none;
+            width: 80%;
+            height: 450px;
+        }
+
+        #kodCodeOwner{
+        text-align: right;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 175%;
+        }
+
+        .buttonN{
+            width: 20%;
+            height: 25px;
+            background-color: #111;
+            color: white;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+    </style>
+</html>

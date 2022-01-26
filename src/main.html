@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+		<script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+        <title>Codears</title>
+    </head>
+
+    <body>
+        <div id="app">
+            <div v-if="page == 'main'">
+                <div v-if="user == ''">
+                    <center>
+                        <br><br><br>
+                        <h2 class="hero glitch layers" data-text="CODEARS"><span>CODEARS</span></h2>
+                        <br><br>
+                        <h2 class="hero glitch layers" style="font-size: 100%;" data-text="CODEARS"><span>Ücretsiz olarak kod bakıp, kod paylaşabileceğiniz bir site.</span></h2>
+                        <br><br><br><br><br><br><br>
+                        <button v-on:click="page = 'girisYap'" class="mainButton"><span class="hero" style="font-size:100%">Giriş Yap</span></button>
+                        <br><br><br><br><br>
+                        <button v-on:click="page = 'kayitOl'" class="mainButton"><span class="hero" style="font-size:100%">Kayıt Ol</span></button>
+                    </center>
+                </div>
+
+                <div v-else>
+                    <center>
+                        <br><br><br>
+                        <h2 class="hero glitch layers" :data-text="'user'"><span style = "font-size: 80%;">{{user}}</span></h2>
+                        <br><br>
+                        <h2 class="hero glitch layers" style="font-size: 100%;" data-text="Hoşgeldin :)"><span>Hoşgeldin :)</span></h2>
+                        <br><br><br><br><br><br><br>
+                        <button v-on:click="page = 'kodBak'" class="mainButton"><span class="hero" style="font-size:100%">Kod Bak</span></button>
+                        <br><br><br><br><br>
+                        <button v-on:click="page = 'kodEkle'" class="mainButton"><span class="hero" style="font-size:100%">Kod Ekle</span></button>
+                    </center>
+                </div>
+            </div>  
+
+            <div v-if="page == 'girisYap'">
+                <button class="backButton" v-on:click="page = 'main'"> < </button>
+                <center>
+                    <div style="position: absolute;top: 20%;left: 1%;width: 98%;">
+                        <br><br><br>
+                        <input id="loginUsername" type="text" class="loginInput" placeholder="Kullanıcı Adı" maxlength="25">
+                        <br><br><br><br>
+                        <input id="loginPassword" type="password" class="loginInput" placeholder="Şifre" maxlength="25"> 
+                        <br><br><br><br><br>
+                        <button v-on:click="login" class="loginButton"><span class="hero" style="font-size:100%">Giriş Yap</span></button>
+                    </div>
+                </center>
+            </div>
+
+            <div v-if="page == 'kayitOl'">
+                <button class="backButton" v-on:click="page = 'main'"> < </button>
+                <center>
+                    <div style="position: absolute;top: 20%;left: 1%;width: 98%;">
+                        <input id="registerNickname" type="text" class="loginInput" placeholder="Takma Ad" maxlength="15">
+                        <br><br><br>
+                        <input id="registerUsername" type="text" class="loginInput" placeholder="Kullanıcı Adı" maxlength="25">
+                        <br><br><br>
+                        <input id="registerPassword" type="password" class="loginInput" placeholder="Şifre" maxlength="25"> 
+                        <br><br><br><br><br>
+                        <button v-on:click="register" class="loginButton"><span class="hero" style="font-size:100%">Kayıt Ol</span></button>
+                    </div>
+                </center>
+            </div>  
+            
+            <div v-if="page == 'kodEkle'">
+                <button class="backButton" v-on:click="page = 'main'"> < </button>
+                <center>
+                    <input id="kodEkleCodeName" type="text" placeholder="Kod ismi" maxlength="25">
+                    <br><br>
+                    <input id="kodEkleCodeDescription" placeholder="Kod Açıklaması" type="text" maxlength="40">
+                    <br><br>
+                    <textarea id="kodEkleCodeArea" placeholder="Kod"></textarea>
+                    <br>
+                    <button v-on:click="addCode" id="kodEkleButton"><span class="hero" style="font-size: 100%;">Ekle</span></button>
+                </center>
+            </div> 
+
+            <div v-if="page == 'kodBak'">
+                <button class="backButton" v-on:click="page = 'main'"> < </button>
+                <br><br><br>
+                    {{getCodes()}}
+                <div v-for = "(c,i) in codes">
+                    <center>
+                        <div v-on:click="viewCode(i)" id="kodBakCodeDiv">
+                            <center>
+                                <p id="kodBakCodeName">{{c.name}}</p>
+                                <p id="kodBakCodeDescription">{{c.description}}</p>
+                                <p id="kodBakCodeOwner">{{c.owner}}</p>
+                            </center>
+                        </div>
+                    </center>
+                </div>
+
+            </div>
+            <div v-if = "page == 'kod'">
+                <button class="backButton" style="display: inline-block;" v-on:click="page = 'kodBak'"> < </button>
+                <center>
+                    <span id="kodCodeName">{{codes[viewingCodeId].name}}</span>
+                    <p id="kodCodeDescription">{{codes[viewingCodeId].description}}</p>
+                    <textarea id="kodCodeArea" disabled>{{codes[viewingCodeId].code}}</textarea>
+                    <div><div v-on:click="likeCode" class="heart" v-bind:style="{background : kodHeartColor}"></div> {{viewingCodeLikes.length}} </div>
+                    <div style="text-align: right;"><p><span id="kodCodeOwner">-{{codes[viewingCodeId].owner}}</span></p></div>
+                </center>
+            </div>
+        </div>
+    </body>
+    <script src="/script.js"></script>
+</html>
