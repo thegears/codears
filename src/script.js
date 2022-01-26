@@ -9,7 +9,7 @@ var _vue = new Vue({
         viewingCodeId : "0",
         kodHeartColor : "#111",
         viewingCodeLikes : "",
-        isLiked : "false"
+        likedCodes : []
     },
     methods : {
         register(){
@@ -69,8 +69,8 @@ var _vue = new Vue({
             });
         },
         likeCode(){
-            if(this.isLiked == "true" || this.viewingCodeLikes.includes(this.user)) return alert("Zaten beğenmişsiniz ! ");
-            this.isLiked = "true";
+            if(this.likedCodes.includes(this.viewingCodeId) || this.viewingCodeLikes.includes(this.user)) return alert("Zaten beğenmişsiniz ! ");
+            this.likedCodes.push(this.viewingCodeId);
             this.viewingCodeLikes.push(this.user);
             let codeId = this.viewingCodeId;
             let user = this.user;
