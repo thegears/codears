@@ -55,11 +55,11 @@
                     this.page = "kod";
                 },
                 acceptCode(){
-                    socket.emit("adminPanelAcceptCodeToServer",this.codesLength - 1);
+                    socket.emit("adminPanelAcceptCodeToServer",this.codes[this.viewingCodeId].codeId);
                     this.page = "main";
                 },
                 declineCode(){
-                    socket.emit("adminPanelDeclineCodeToServer",this.codesLength - 1);
+                    socket.emit("adminPanelDeclineCodeToServer",this.codes[this.viewingCodeId].codeId);
                     this.page = "main";
                 }
             }
