@@ -41,39 +41,22 @@ var _vue = new Vue({
             if($("#loginUsername").value.split("").length == $("#loginUsername").value.split("").filter(a => a == " ").length || $("#loginPassword").value.split("").length == $("#loginPassword").value.split("").filter(a => a == " ").length) return alert("Lütfen Boş Yer Bırakmayın ! ");
             
             socket.emit("getUsersToServer","getUsersToServer");
-            socket.on("getUsersToClient",data => {
-                if(!data.map(a => a.userName).includes($("#loginUsername").value) || $("#loginPassword").value != data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].password) return alert("Kullanıcı adı veya şifre yanlış ! ");
-            
-                this.user = data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].nickName;
-
-                this.page = "main";
-            });
         },
         getCodes(){
             socket.emit("getCodesToServer","getCodesToServer");
-            socket.on("getCodesToClient",data => {
-                this.codes = data[0].filter(a => data[1].includes(a.codeId));
-            });
         },
         viewCode(i){
-            this.isLiked = "false";
             this.page = "kod";
             socket.emit("getCodeLikesToServer",this.codes[i].codeId);
-            socket.on("getCodeLikesToClient",data => {
-                this.viewingCodeLikes = data;
-                this.viewingCodeId = i;
-                if(data.includes(this.user)){
-                    this.kodHeartColor = "red";
-                }else{
-                    this.kodHeartColor = "#111";
-                };
-            });
+            this.viewingCodeId = i;
+            this.isLiked = "false";
+
         },
         likeCode(){
-            if(this.viewingCodeLikes.includes(this.user)) return alert("Zaten beğenmişsiniz ! ");
-            if(this.isLiked == "true") return alert("Zaten beğenmişsiniz ! ");
+            if(this.isLiked == "true" || this.viewingCodeLikes.includes(this.user)) return alert("Zaten beğenmişsiniz ! ");
             this.isLiked = "true";
-            let codeId = this.viewingCodeId;
+            this.viewingCodeLikes.push(this.user);
+            let codeId = this.codes[this.viewingCodeId].codeId;
             let user = this.user;
             socket.emit("newLikeToServer",{
                 code : codeId,
@@ -102,4 +85,25 @@ var _vue = new Vue({
             this.page = "main";
         }
     }
+});
+
+socket.on("getCodeLikesToClient",data => {
+    _vue.viewingCodeLikes = data;
+    if(data.includes(_vue.user)){
+    _vue.kodHeartColor = "red";
+    }else{
+    _vue.kodHeartColor = "#111";
+    };
+});
+
+socket.on("getCodesToClient",data => {
+    _vue.codes = data[0].filter(a => data[1].includes(a.codeId));
+});
+
+socket.on("getUsersToClient",data => {
+    if(!data.map(a => a.userName).includes($("#loginUsername").value) || $("#loginPassword").value != data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].password) return alert("Kullanıcı adı veya şifre yanlış ! ");
+
+    _vue.user = data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].nickName;
+
+    _vue.page = "main";
 });
