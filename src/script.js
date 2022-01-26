@@ -73,7 +73,6 @@ var _vue = new Vue({
             if(this.viewingCodeLikes.includes(this.user)) return alert("Zaten beğenmişsiniz ! ");
             if(this.isLiked == "true") return alert("Zaten beğenmişsiniz ! ");
             this.isLiked = "true";
-            this.viewingCodeLikes.push(this.user);
             let codeId = this.viewingCodeId;
             let user = this.user;
             socket.emit("newLikeToServer",{
