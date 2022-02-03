@@ -82,8 +82,7 @@ socket.on("getCodesToClient",data => {
 
 socket.on("getUsersToClient",data => { 
     if($("#registerNickname").value){
-         socket.on("getUsersToClient",data => {
-                $ = (a) => document.querySelector(a);
+         $ = (a) => document.querySelector(a);
                 if($("#registerNickname").value.split("").length == $("#registerNickname").value.split("").filter(a => a == " ").length || $("#registerUsername").value.split("").length == $("#registerUsername").value.split("").filter(a => a == " ").length || $("#registerPassword").value.split("").length == $("#registerPassword").value.split("").filter(a => a == " ").length) return alert("Lütfen Boş Yer Bırakmayın ! ");
                 if($("#registerNickname").value.split("").length < 3) return alert("Takma ad en az 3 karakterli olmalı ! ");
                 if($("#registerUsername").value.split("").length < 6) return alert("Kullanıcı adı en az 6 karakterli olmalı ! ");
@@ -102,7 +101,6 @@ socket.on("getUsersToClient",data => {
 
                     this.page = "main";
                 };
-            });
     }else{
         $ = (a) => document.querySelector(a);
 
