@@ -14,27 +14,6 @@ var _vue = new Vue({
     methods : {
         register(){
             socket.emit("getUsersToServer","getUsersToServer");
-            socket.on("getUsersToClient",data => {
-                $ = (a) => document.querySelector(a);
-                if($("#registerNickname").value.split("").length == $("#registerNickname").value.split("").filter(a => a == " ").length || $("#registerUsername").value.split("").length == $("#registerUsername").value.split("").filter(a => a == " ").length || $("#registerPassword").value.split("").length == $("#registerPassword").value.split("").filter(a => a == " ").length) return alert("Lütfen Boş Yer Bırakmayın ! ");
-                if($("#registerNickname").value.split("").length < 3) return alert("Takma ad en az 3 karakterli olmalı ! ");
-                if($("#registerUsername").value.split("").length < 6) return alert("Kullanıcı adı en az 6 karakterli olmalı ! ");
-                if($("#registerPassword").value.split("").length < 8) return alert("Şifre en az 8 karakterli olmalı ! ");
-                if(data){
-                    if(data.map(a => a.nickName).includes($("#registerNickname").value)) return alert("Bu Takma Ad Kullanılmaktadır ! ");
-                    if(data.map(a => a.userName).includes($("#registerUsername").value)) return alert("Bu Kullanıcı Adı Kullanılmaktadır ! ");
-    
-                    socket.emit("newUserToServer",{
-                        nickName : $("#registerNickname").value,
-                        userName : $("#registerUsername").value,
-                        password : $("#registerPassword").value
-                    });
-
-                    this.user = $("#registerNickname").value;
-
-                    this.page = "main";
-                };
-            });
         },
         login(){
             $ = (a) => document.querySelector(a);
@@ -101,10 +80,36 @@ socket.on("getCodesToClient",data => {
     _vue.codes = data[0].filter(a => data[1].includes(a.codeId));
 });
 
-socket.on("getUsersToClient",data => {
-    if(!data.map(a => a.userName).includes($("#loginUsername").value) || $("#loginPassword").value != data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].password) return alert("Kullanıcı adı veya şifre yanlış ! ");
+socket.on("getUsersToClient",data => { 
+    if($("#registerNickname").value){
+         socket.on("getUsersToClient",data => {
+                $ = (a) => document.querySelector(a);
+                if($("#registerNickname").value.split("").length == $("#registerNickname").value.split("").filter(a => a == " ").length || $("#registerUsername").value.split("").length == $("#registerUsername").value.split("").filter(a => a == " ").length || $("#registerPassword").value.split("").length == $("#registerPassword").value.split("").filter(a => a == " ").length) return alert("Lütfen Boş Yer Bırakmayın ! ");
+                if($("#registerNickname").value.split("").length < 3) return alert("Takma ad en az 3 karakterli olmalı ! ");
+                if($("#registerUsername").value.split("").length < 6) return alert("Kullanıcı adı en az 6 karakterli olmalı ! ");
+                if($("#registerPassword").value.split("").length < 8) return alert("Şifre en az 8 karakterli olmalı ! ");
+                if(data){
+                    if(data.map(a => a.nickName).includes($("#registerNickname").value)) return alert("Bu Takma Ad Kullanılmaktadır ! ");
+                    if(data.map(a => a.userName).includes($("#registerUsername").value)) return alert("Bu Kullanıcı Adı Kullanılmaktadır ! ");
+    
+                    socket.emit("newUserToServer",{
+                        nickName : $("#registerNickname").value,
+                        userName : $("#registerUsername").value,
+                        password : $("#registerPassword").value
+                    });
 
-    _vue.user = data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].nickName;
+                    this.user = $("#registerNickname").value;
 
-    _vue.page = "main";
+                    this.page = "main";
+                };
+            });
+    }else{
+        $ = (a) => document.querySelector(a);
+
+        if(!data.map(a => a.userName).includes($("#loginUsername").value) || $("#loginPassword").value != data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].password) return alert("Kullanıcı adı veya şifre yanlış ! ");
+
+        _vue.user = data[data.map(a=>a.userName).indexOf($("#loginUsername").value)].nickName;
+
+        _vue.page = "main";
+    };
 });
