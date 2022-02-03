@@ -1,4 +1,5 @@
 const socket = io();
+var $ = (a) => document.querySelector(a);
 
 var _vue = new Vue({
     el : "#app",
