@@ -98,9 +98,9 @@ socket.on("getUsersToClient",data => {
                         password : $("#registerPassword").value
                     });
 
-                    this.user = $("#registerNickname").value;
+                    _vue.user = $("#registerNickname").value;
 
-                    this.page = "main";
+                    _vue.page = "main";
                 };
     }else{
         $ = (a) => document.querySelector(a);
