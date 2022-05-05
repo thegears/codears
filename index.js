@@ -4,8 +4,8 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const { MongoDB } = require("ark.db");
-const db = new MongoDB("mongodb+srv://biktim:biktim@cluster0.j62wo.mongodb.net/codears?retryWrites=true&w=majority", "codears");
+const { Database } = require("ark.db");
+const db = new Database();
 
 app.use(express.static("src"));
 
